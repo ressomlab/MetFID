@@ -24,10 +24,10 @@ def msms_predict(msms_file_path):
         msms_list = i.split('\n')[1:-1]
         msms_dict = mdp.data_process(msms_list)
         msms_dict_scale = mdp.scaling(msms_dict)
-        binned_vec = mdp.binning(msms_dict_scale)
+        msms_dict_denoised = mdp.denoise(msms_dict_scale)
+        binned_vec = mdp.binning(msms_dict_denoised)
         predicted_fp = prediction.predict_fingerprint(binned_vec)
-        compound_dict = rc.retrieve_compound('mass', predicted_fp, '_files/MassDB.csv', 20, msms_dict['precursor'])
-        # compound_dict = rc.retrieve_compound('formula', predicted_fp, '_files/MassDB.csv', 20, inchikey='UWPJYQYRSWYIGZ-UHFFFAOYSA-N')
+        compound_dict = rc.retrieve_compound(predicted_fp, '_files/MassDB.csv', 20, msms_dict['precursor'])
 
         output_file = msms_file_path.split('.')[0] + '_prediction.txt'
         with open(output_file, 'a') as result:
@@ -58,7 +58,7 @@ def inchikey_predict(msms_file_path, inchikey_file_path):
     inchikey_counter = ['#' + i.split('\n')[0] for i in processed_inchikey]
 
     if msms_counter != inchikey_counter:
-        raise ValueError('Counters for two files should be the same.')
+        raise ValueError('Counters for two files should be constant.')
 
     for i, j in zip(processed_msms, processed_inchikey):
         msms_list = i.split('\n')[1:-1]

@@ -1,30 +1,23 @@
 import pandas as pd
-import pubchempy
 from tabulate import tabulate
 
 
-def retrieve_compound(search_type, fingerprint, database, ppm=20, mass=None, inchikey=None):
+def retrieve_compound(fingerprint, database, ppm=20, mass=None):
     """
     Given a search type, predicted fingerprint, a database, and mass(optional),
     returns a table that includes all the possible compounds.
-    :param search_type: search type
     :param fingerprint: predicted fingerprint (len = 528)
     :param database: database.csv
     :param ppm: mass tolerance in ppm (default 20)
     :param mass: precursor mass (optional, required when search_type is mass)
-    :param inchikey: inchikey (optional, required when search_type is formula)
     :return: dict of possible compounds
 
     REQ: For now, the database is not provided by Ressom's lab, and it must be
     a .csv file.
     """
-    candidate_dict = None
     compound_dict = {}
 
-    if search_type == 'formula':
-        candidate_dict = retrieve_candidate(search_type, database, inchikey=inchikey)
-    elif search_type == 'mass':
-        candidate_dict = retrieve_candidate(search_type, database, ppm, mass=mass)
+    candidate_dict = retrieve_candidate(database, ppm, mass=mass)
 
     try:
         for candidate, fp in candidate_dict.items():
@@ -36,50 +29,46 @@ def retrieve_compound(search_type, fingerprint, database, ppm=20, mass=None, inc
     return compound_dict
 
 
-def retrieve_candidate(search_type, database, ppm=None, mass=None, inchikey=None):
+def retrieve_candidate(database, ppm=None, mass=None):
     """
     Given a search type, a database, mass(optional), and inchikey(optional)
     returns a dict that contains all qualified candidates.
-    :param search_type: search type
     :param database: database.csv
     :param ppm: mass tolerance in ppm (optional, required when search_type is mass)
     :param mass: precursor mass (optional, required when search_type is mass)
-    :param inchikey: inchikey (optional, required when search_type is formula)
     :return: dict{(Name, Inchikey): candidate fingerprint}
 
     REQ: The search type must be one of 'mass' or 'formula'. For now, the
     database is not provided by Ressom's lab, and it must be a .csv file.
     """
     df = pd.read_csv(database)
-    candidate_df = None
 
-    if search_type == 'formula':
-        try:
-            # omics_craft database
-            formula = df.loc[df['Inchikey'] == inchikey]["Formula"].iloc[0]
-            # print("get formula from database")
-        except:
-            # pubchempy
-            formula = pubchempy.get_compounds(identifier=inchikey, namespace="inchikey")[0].molecular_formula
-        candidate_df = df.loc[df["Formula"] == formula]
-    elif search_type == 'mass':
-        min_weight = mass * 1000000.0 / (1000000.0 + ppm)
-        max_weight = mass * 1000000.0 / (1000000.0 - ppm)
-        candidate_df = df.loc[df['Mass'].between(min_weight, max_weight, inclusive=True)]
+    # try:
+    #     # omics_craft database
+    #     formula = df.loc[df['Inchikey'] == inchikey]["Formula"].iloc[0]
+    #     # print("get formula from database")
+    # except:
+    #     # pubchempy
+    #     formula = pubchempy.get_compounds(identifier=inchikey, namespace="inchikey")[0].molecular_formula
+
+    min_weight = mass * 1000000.0 / (1000000.0 + ppm)
+    max_weight = mass * 1000000.0 / (1000000.0 - ppm)
+    candidate_df = df.loc[df['Mass'].between(min_weight, max_weight, inclusive=True)]
 
     if len(candidate_df) == 0:
         return None
 
-    candidate_list = candidate_df[['Name', 'Inchikey', 'fp_vec']].values.tolist()
+    candidate_list = candidate_df[['Name', 'Inchikey', 'Formula', 'fp_vec']].values.tolist()
     candidate_dict = {}
+
     for candidate in candidate_list:
-        fp = candidate[2]
+        fp = candidate[3]
         try:
             fp = list(fp[1:len(fp) - 1].split(','))
         except:
             continue
         fp = [int(i) for i in fp]
-        candidate_dict[candidate[0], candidate[1]] = fp
+        candidate_dict[candidate[0], candidate[1], candidate[2]] = fp
 
     return candidate_dict
 
@@ -123,9 +112,9 @@ def visualize_compound_dict(compound_dict, compound_name=True):
 
     if compound_name:
         for k, v in sorted_dict.items():
-            sort_list.append([str(k[0]), str(k[1]), str(v)])
+            sort_list.append([str(k[0]), str(k[1]), str(k[2]), str(v)])
 
-        return tabulate(sort_list, headers=['Compound Name', 'Inchikey', 'Score'])
+        return tabulate(sort_list, headers=['Compound Name', 'Inchikey', 'Formula', 'Score'])
     else:
         for k, v in sorted_dict.items():
             sort_list.append([str(k), str(v)])
