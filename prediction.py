@@ -9,7 +9,7 @@ def predict_fingerprint(binned_vector):
     :param binned_vector: a binned vector
     :return: predicted fingerprint
     """
-    model = tf.keras.models.load_model('MetFID_CNN.h5')
+    model = tf.keras.models.load_model('MetFID_CNN_40088_5618.h5')
 
     # for 1d CNN
     predicted = model.predict(np.array([binned_vector]), verbose=0)[0]
