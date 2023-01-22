@@ -2,9 +2,9 @@
 CNN-Based Compound Fingerprint Prediction for Metabolite Annotation
 
 ## Getting Started
-Before running the program, you need to have the [PubChemPy 1.0.4][1], [Open Babel 3.1.1][2], [tabulate 0.8.9][3] and [Tensorflow][4] installed.
+Before running the program, you need to have the [PyFingerprint][7], [PubChemPy 1.0.4][1], [Open Babel 3.1.1][2], [tabulate 0.8.9][3] and [Tensorflow][4] installed.
 
-And also, please download the latest CNN model -- [MetFID_CNN.h5][5] and put it in the root directory of MetFID.
+And also, please download the latest CNN model -- [MetFID_CNN_40088_5618.h5][5] and put it in the root directory of MetFID.
 
 ## Prerequisites
 This program works with Python 3.5+.
@@ -66,7 +66,7 @@ Notice that, each list is separated by `#digit`. There will be an error pop up i
 
 ## Running the Program
 * For Ressom Lab users  
-Before running the program, please **uncomment** line 5 and **comment** line 8 in `main.py`, then run:
+Before running the program, please **uncomment** line 7 and **comment** line 10 in `main.py`, then run:
 
 ```
 $ python3 main.py
@@ -85,19 +85,19 @@ There will be an output file `testing_compound_prediction.txt` be created in the
 #1
 Inchikey                        Score
 ---------------------------  --------
-ZKLPARSLTMPFCP-UHFFFAOYSA-N  0.632911
-SGUAFYQXFOLMHL-UHFFFAOYSA-N  0.550562
-CECDPVOEINSAQG-UHFFFAOYSA-N  0.390805
-XSJLXZULZZXNJI-UHFFFAOYSA-N  0.257143
-HEWDOWUUTBCVJP-UHFFFAOYSA-N  0.197802
+ZKLPARSLTMPFCP-UHFFFAOYSA-N  0.742547
+SGUAFYQXFOLMHL-UHFFFAOYSA-N  0.381818
+CECDPVOEINSAQG-UHFFFAOYSA-N  0.290323
+XSJLXZULZZXNJI-UHFFFAOYSA-N  0.268844
+HEWDOWUUTBCVJP-UHFFFAOYSA-N  0.201946
 #2
 Inchikey                        Score
 ---------------------------  --------
-BBNQQADTFFCFGB-UHFFFAOYSA-N  0.625
-JLZANJDGGAPGOF-UHFFFAOYSA-N  0.423077
-VILFVXYKHXVYAB-UHFFFAOYSA-N  0.314286
-RFHAOTPXVQNOHP-UHFFFAOYSA-N  0.213483
-XXOYUNQCBYNWNL-UHFFFAOYSA-N  0.189474
+BBNQQADTFFCFGB-UHFFFAOYSA-N  0.586826
+JLZANJDGGAPGOF-UHFFFAOYSA-N  0.373913
+RFHAOTPXVQNOHP-UHFFFAOYSA-N  0.296629
+VILFVXYKHXVYAB-UHFFFAOYSA-N  0.290419
+XXOYUNQCBYNWNL-UHFFFAOYSA-N  0.167984
 ```
 
 The first column represents the `InChIKeys`, and the second column represents the `Tanimoto similarity score`. Each table will be ranked in a descending order by score.
@@ -107,5 +107,6 @@ The first column represents the `InChIKeys`, and the second column represents th
 [2]:https://openbabel.org/wiki/Python
 [3]:https://pypi.org/project/tabulate/
 [4]:https://www.tensorflow.org/
-[5]:https://github.com/ressomlab/MetFID/releases/tag/v1.0.0
-[6]:https://github.com/ressomlab/MetFID/tree/main/_files
+[5]:https://drive.google.com/file/d/1KCvvjjRQk4Q9PUC7ajF20sTWxd6nBcnP/view?usp=sharing
+[6]:https://github.com/aohongyu/MetFID/tree/main/_files
+[7]:https://github.com/hcji/PyFingerprint
